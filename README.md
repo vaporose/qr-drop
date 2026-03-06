@@ -20,7 +20,7 @@ Communication is handled over WebSockets. The backend manages session state in m
 
 ## Security model
 
-QRDrop is designed for local network use. A few things worth understanding:
+QRDrop is designed for local network use:
 
 - **No persistence:** no database, no chat logs, no user accounts
 - **In-memory only:** session state lives only for the duration of the session
@@ -37,7 +37,7 @@ Active development. Core functionality (session creation, QR join flow, real-tim
 
 ## Setup
 
-_Installation instructions coming once packaging is finalized. The backend is a standard FastAPI app, and the frontend is a Vite/Vue project — both runnable in the usual ways in the meantime._
+_Installation instructions to come once packaging is finalized. The backend is a standard FastAPI app, and the frontend is a Vite/Vue project — both runnable in the usual ways in the meantime._
 
 ## License
 
