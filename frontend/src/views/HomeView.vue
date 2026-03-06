@@ -6,11 +6,18 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL
 const protocol = import.meta.env.VITE_URL_PROTOCOL
 
 async function createSession() {
-  const response = await fetch(`${protocol}://${backendUrl}/create-session`, {
-    method: 'POST'
-  })
-  const data = await response.json()
-  await router.push(`/chat/${data.session_id}`)
+  try {
+    const response = await fetch(`${protocol}://${backendUrl}/create-session`, {
+      method: 'POST'
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    await router.push(`/chat/${data.session_id}`)
+  } catch (error) {
+    console.error('Failed to create session:', error)
+  }
 }
 </script>
 
@@ -21,13 +28,13 @@ async function createSession() {
     <p class="text-sm text-gray-500 mb-6">No logins. No tracking. Messages are never stored.</p>
     <button
       @click="createSession()"
-      class="font-semibold py-3 px-6 rounded-lg text-xl transition"
+      class="font-semibold py-3 px-6 rounded-lg text-xl transition bg-blue-600 hover:bg-blue-700 text-white"
     >
       Start New Chat
     </button>
   </div>
 </template>
-`
+
 <style scoped>
 /* optional styling */
 </style>
