@@ -23,7 +23,7 @@ async function createSession() {
 
 <template>
   <div class="min-h-screen w-full flex flex-col items-center text-center px-4 justify-center gap-y-6">
-    <h1 class="text-4xl font-bold mb-4">Ephemeral Chat</h1>
+    <h1 class="text-4xl font-bold mb-4">QR Drop</h1>
     <p class="text-lg mb-2">A quick and secure way to chat between devices.</p>
     <p class="text-sm text-gray-500 mb-6">No logins. No tracking. Messages are never stored.</p>
     <button
