@@ -14,9 +14,4 @@ import Footer from './components/Footer.vue'
 
 <style scoped>
 /* Optional global styles here */
-body {
-  margin: 0 auto;
-  padding: 0;
-  font-family: system-ui, sans-serif;
-}
 </style>
