@@ -32,10 +32,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import QrcodeVue from 'qrcode.vue'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuid4 } from 'uuid'
 
 const route = useRoute()
-const clientId = uuidv4()
+const clientId = uuid4()
 const sessionId = route.params.sessionId as string
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
