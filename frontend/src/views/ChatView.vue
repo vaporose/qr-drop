@@ -35,14 +35,13 @@ import QrcodeVue from 'qrcode.vue'
 import { v4 as uuid4 } from 'uuid'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
+import { CONFIG } from '@/constants/config'
 
 const route = useRoute()
 const clientId = uuid4()
 const sessionId = route.params.sessionId as string
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL
-const frontendUrl = import.meta.env.VITE_FRONTEND_URL
-const chatUrl = `${frontendUrl}/chat/${sessionId}`
+const chatUrl = `${CONFIG.frontendUrl}/chat/${sessionId}`
 const socket = ref<WebSocket | null>(null)
 const messages = ref<string[]>([])
 const input = ref('')
@@ -61,7 +60,7 @@ function sendMessage() {
 }
 
 onMounted(() => {
-  socket.value = new WebSocket(`ws://${backendUrl}/ws/${sessionId}`)
+  socket.value = new WebSocket(`${CONFIG.backendWsUrl}/ws/${sessionId}`)
 
   socket.value.onmessage = (event) => {
     const data = JSON.parse(event.data)

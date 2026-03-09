@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { CONFIG } from '@/constants/config'
 
 const router = useRouter()
-const backendUrl = import.meta.env.VITE_BACKEND_URL
-const protocol = import.meta.env.VITE_URL_PROTOCOL
+
 
 async function createSession() {
   try {
-    const response = await fetch(`${protocol}://${backendUrl}/create-session`, {
+    const response = await fetch(`${CONFIG.backendUrl}/create-session`, {
       method: 'POST'
     })
     if (!response.ok) {

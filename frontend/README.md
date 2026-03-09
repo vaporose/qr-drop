@@ -1,20 +1,17 @@
-# .
+# QR Drop Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Environment Variables
 
-## Recommended IDE Setup
+See `.env.example` for required environment variables. Create a `.env` file in the root of the frontend directory with the necessary values.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## VUE 3 + VITE TEMPLATE 
 
-## Type Support for `.vue` Imports in TS
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
+### Customize configuration
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+### Project Setup
 
 ```sh
 npm install
