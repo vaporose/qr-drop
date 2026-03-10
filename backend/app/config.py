@@ -1,14 +1,20 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+"""
+Configuration module for QR Drop.
 
+Dynaconf settings are loaded from /backend/config/settings.toml and
+/backend/config/.secrets.toml. root_path is resolved relative to this
+file's location at /backend/app/config.py.
+"""
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(case_sensitive=False, env_file=".env")
-    host_ip: str = "localhost"
-    port: int = 5173
-    protocol: str = "http"
-    base_url: str = f"{protocol}://{host_ip}:{port}"
-    base_chat_url: str = f"{base_url}/chat/"
+from dynaconf import Dynaconf
+from pathlib import Path
 
-
-SETTINGS = Settings()
+SETTINGS = Dynaconf(
+    envvar_prefix="APP",
+    settings_files=["settings.toml", ".secrets.toml"],
+    load_dotenv=True,
+    default_env="default",
+    environments=True,
+    root_path=Path(__file__).parent.parent / "config",
+)
 

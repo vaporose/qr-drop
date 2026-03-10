@@ -1,0 +1,31 @@
+[default]
+debug = true
+title = "QR Drop"
+host = "localhost"
+frontend_port = 5173
+protocol = "http"
+base_frontend_url = "@format {this.PROTOCOL}://{this.HOST}:{this.FRONTEND_PORT}"
+base_chat_url = "@format {this.BASE_FRONTEND_URL}/chat"
+
+[default.logging]
+version = 1
+disable_existing_loggers = false
+
+[default.logging.formatters.default]
+format = "%(asctime)s  %(levelname)-8s : %(name)s | %(funcName)s | %(lineno)d | %(message)s"
+datefmt = "%Y-%m-%dT%H:%M:%S"
+
+[default.logging.handlers.console]
+class = "logging.StreamHandler"
+formatter = "default"
+stream = "ext://sys.stdout"
+
+[default.logging.root]
+handlers = ["console"]
+level = "DEBUG"
+
+[production]
+debug = false
+
+[production.logging.root]
+level = "INFO"
