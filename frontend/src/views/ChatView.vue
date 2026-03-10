@@ -60,7 +60,7 @@ function sendMessage() {
 }
 
 onMounted(() => {
-  socket.value = new WebSocket(`${CONFIG.backendWsUrl}/ws/${sessionId}`)
+  socket.value = new WebSocket(`${CONFIG.backendWsUrl}/${sessionId}`)
 
   socket.value.onmessage = (event) => {
     const data = JSON.parse(event.data)
