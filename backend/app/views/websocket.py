@@ -22,7 +22,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     try:
         while True:
             data = await websocket.receive_text()
-            # Broadcast to other clients in same session
+            # Broadcast to other clients in the same session
             for client in SESSIONS[session_id]:
                 await client.send_text(data)
     except Exception as e:

@@ -1,9 +1,8 @@
+import secrets
+
 from .router import router
 from ..config import SETTINGS
 from ..schemas import CreateSessionResponse
-from fastapi import FastAPI, WebSocket
-import secrets
-
 
 
 @router.post("/create-session")
