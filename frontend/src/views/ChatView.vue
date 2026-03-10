@@ -7,7 +7,7 @@
       <QrcodeVue :value="chatUrl" :size="200" />
     </div>
 
-    <div class="w-full max-w-xl rounded-lg p-4 mb-4 h-64 overflow-y-auto">
+    <div class="w-full max-w-xl rounded-md p-4 mb-4 h-64 overflow-y-auto chatbox">
       <div v-for="(msg, index) in messages" :key="index" class="mb-1">
         {{ msg }}
       </div>
@@ -18,10 +18,10 @@
         v-model="input"
         @keyup.enter="sendMessage()"
         type="text"
-        class="flex-grow px-4 py-2 border rounded-lg"
+        class="flex-grow px-4 py-2 border rounded-md messagebox"
         :placeholder="STRINGS.chat.placeholder"
       />
-      <button @click="sendMessage()" class="px-4 py-2 rounded-lg">
+      <button @click="sendMessage()" class="px-4 py-2 rounded-md">
         {{ STRINGS.chat.sendButton }}
       </button>
     </div>
@@ -91,3 +91,14 @@ onUnmounted(() => {
   socket.value?.close()
 })
 </script>
+
+<style scoped>
+.chatbox {
+  background-color: var(--color-background-soft);
+}
+
+.messagebox {
+  background-color: var(--color-background-mute);
+}
+
+</style>
