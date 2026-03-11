@@ -8,8 +8,11 @@
     </div>
 
     <div class="w-full max-w-xl rounded-md p-4 mb-4 h-64 overflow-y-auto chatbox">
-      <div v-for="(msg, index) in messages" :key="index" class="mb-1">
-        {{ msg }}
+      <div v-for="(msg, index) in messages" :key="index"
+        class="mb-1 px-3 py-1 rounded-md"
+        :class="{ 'message-self': msg.self, 'message-other': !msg.self }"
+      >
+        {{ msg.text }}
       </div>
     </div>
 
@@ -72,18 +75,18 @@ onMounted(() => {
     } else {
       messages.value.push(
         data.client_id === clientId
-          ? `${STRINGS.chat.you}: ${data.message}`
-          : `${STRINGS.chat.them}: ${data.message}`
+          ? { text: `${STRINGS.chat.you}: ${data.message}`, self: true }
+          : { text: `${STRINGS.chat.them}: ${data.message}`, self: false }
       )
     }
   }
 
   socket.value.onopen = () => {
-    messages.value.push(STRINGS.chat.connected)
+    messages.value.push({ text: STRINGS.chat.connected, self: false })
   }
 
   socket.value.onclose = () => {
-    messages.value.push(STRINGS.chat.disconnected)
+    messages.value.push({ text: STRINGS.chat.disconnected, self: false })
   }
 })
 
@@ -99,6 +102,14 @@ onUnmounted(() => {
 
 .messagebox {
   background-color: var(--color-background-mute);
+}
+
+.message-self{
+  background-color: var(--color-background-accent);
+}
+
+.message-other{
+  background-color: var(--color-background-transparent);
 }
 
 </style>

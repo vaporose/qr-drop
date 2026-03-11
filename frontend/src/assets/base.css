@@ -5,6 +5,7 @@
   --c-tan-warm: #dfb388;
   --c-tan-muted: #e8c49a;
   --c-tan-dark: #b48c74;
+  --c-tan-dark-low-opacity: rgba(180, 140, 116, 0.3);
   --c-tan-low-opacity: rgba(223, 179, 136, 0.6);
 
   --vt-c-white: #ffffff;
@@ -18,7 +19,8 @@
   --vt-c-indigo: #2c3e50;
   --vt-c-indigo-dark: #18222C;
   --vt-c-indigo-soft: #3e5265;
-  --c-indigo-low-opacity: rgba(44, 62, 80, 0.6);
+  --c-indigo-low-opacity: rgba(101, 120, 149, 0.42);
+  --c-indigo-dark-low-opacity: rgba(105, 118, 159, 0.2);
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
@@ -28,6 +30,8 @@
   --color-background: var(--c-tan-warm);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
+  --color-background-transparent: var(--c-tan-low-opacity);
+  --color-background-accent: var(--c-tan-dark-low-opacity);
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
@@ -57,6 +61,8 @@ button:hover {
     --color-background: var(--vt-c-indigo-dark);
     --color-background-soft: var(--vt-c-black-soft);
     --color-background-mute: var(--vt-c-black-mute);
+    --color-background-transparent: var(--c-indigo-low-opacity);
+    --color-background-accent: var(--c-indigo-dark-low-opacity);
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
@@ -68,7 +74,7 @@ button:hover {
 
   button {
     background-color: var(--vt-c-indigo);
-    color: var(--vt-c-tan-muted);
+    color: var(--c-tan-muted);
   }
 
   button:hover {
