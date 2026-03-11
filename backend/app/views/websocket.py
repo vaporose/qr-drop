@@ -30,13 +30,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
     try:
         while True:
-            data = await websocket.receive_text()
-            logger.debug(f"Received message from {identity}: {data}")
-            for client in SESSIONS[session_id]:
-                await client.send_json({
-                    "client_id": identity,
-                    "message": data
-                })
+            data = await websocket.receive_json()
+            if data["type"] == "chat_message":
+                for client in SESSIONS[session_id]:
+                    await client.send_json({
+                        "type": "chat_message",
+                        "client_id": identity,
+                        "message": data["message"]
+                    })
     except Exception as e:
         print(f"WebSocket error: {e}")
     finally:

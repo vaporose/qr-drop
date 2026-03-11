@@ -62,7 +62,7 @@ const qrVisible = ref(true)
 
 function sendMessage() {
   if (socket.value && input.value.trim() !== '') {
-    socket.value.send(JSON.stringify(input.value))
+    socket.value.send(JSON.stringify({ type: 'chat_message', message: input.value }))
     input.value = ''
   }
 }
@@ -80,7 +80,7 @@ onMounted(() => {
       if (data.count >= 2) {
         qrVisible.value = false
       }
-    } else {
+    } else if (data.type === MessageType.ChatMessage) {
       console.log('Received message', data)
       messages.value.push(
         data.client_id === identity.value
