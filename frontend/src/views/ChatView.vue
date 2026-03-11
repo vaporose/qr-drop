@@ -7,6 +7,7 @@ import { MessageType } from '@/constants/enums'
 import { CONFIG } from '@/constants/config'
 import type { MessageSender, ChatMessage } from '@/constants/types'
 import MessageList from '@/components/MessageList.vue'
+import MessageInput from '@/components/MessageInput.vue'
 
 const route = useRoute()
 const identity = ref<string>('')
@@ -19,10 +20,9 @@ const messages = ref<ChatMessage[]>([])
 const input = ref('')
 const qrVisible = ref(true)
 
-function sendMessage() {
-  if (socket.value && input.value.trim() !== '') {
-    socket.value.send(JSON.stringify({ type: 'chat_message', message: input.value }))
-    input.value = ''
+function handleSend(message: string) {
+  if (socket.value) {
+    socket.value.send(JSON.stringify({ type: 'chat_message', message }))
   }
 }
 
@@ -77,24 +77,11 @@ onUnmounted(() => {
     <MessageList :messages="messages" />
 
     <!-- Input Section -->
-    <div class="w-full max-w-xl flex gap-2">
-      <input
-        v-model="input"
-        @keyup.enter="sendMessage()"
-        type="text"
-        class="flex-grow px-4 py-2 border rounded-md messagebox"
-        :placeholder="STRINGS.chat.placeholder"
-      />
-      <button @click="sendMessage()" class="px-4 py-2 rounded-md">
-        {{ STRINGS.chat.sendButton }}
-      </button>
-    </div>
+    <MessageInput @send="handleSend" />
   </div>
 </template>
 
 <style scoped>
-.messagebox {
-  background-color: var(--color-background-mute);
-}
+
 
 </style>
