@@ -10,7 +10,7 @@
     <div class="w-full max-w-xl rounded-md p-4 mb-4 h-64 overflow-y-auto chatbox">
       <div v-for="(msg, index) in messages" :key="index"
         class="mb-1 px-3 py-1 rounded-md"
-        :class="{ 'message-self': msg.self, 'message-other': !msg.self }"
+        :class="`message-${msg.sender}`"
       >
         {{ msg.text }}
       </div>
@@ -46,7 +46,9 @@ const sessionId = route.params.sessionId as string
 
 const chatUrl = `${CONFIG.frontendUrl}/chat/${sessionId}`
 const socket = ref<WebSocket | null>(null)
-const messages = ref<string[]>([])
+type MessageSender = 'self' | 'other' | 'system'
+
+const messages = ref<{ text: string; sender: MessageSender }[]>([])
 const input = ref('')
 const qrVisible = ref(true)
 
@@ -82,11 +84,11 @@ onMounted(() => {
   }
 
   socket.value.onopen = () => {
-    messages.value.push({ text: STRINGS.chat.connected, self: false })
+    messages.value.push({ text: STRINGS.chat.connected, sender: "system" })
   }
 
   socket.value.onclose = () => {
-    messages.value.push({ text: STRINGS.chat.disconnected, self: false })
+    messages.value.push({ text: STRINGS.chat.disconnected, sender: "system" })
   }
 })
 
@@ -110,6 +112,13 @@ onUnmounted(() => {
 
 .message-other{
   background-color: var(--color-background-transparent);
+}
+
+.message-system {
+  background-color: transparent;
+  text-align: center;
+  font-style: italic;
+  color: var(--color-text-mute);
 }
 
 </style>
