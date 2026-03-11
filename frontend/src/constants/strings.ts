@@ -7,8 +7,6 @@ export const STRINGS = {
     placeholder: 'Type your message...',
     sendButton: 'Send',
     connected: '[Connected]',
-    disconnected: '[Disconnected]',
-    you: 'You',
-    them: 'Them',
+    disconnected: '[Disconnected]'
   }
 } as const
