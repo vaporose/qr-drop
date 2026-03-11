@@ -64,20 +64,24 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen p-6 flex flex-col items-center justify-start">
-    <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ sessionId }}</h2>
+  <div class="min-h-screen p-6 flex flex-col md:flex-row gap-6">
 
-    <!-- QR Code Section -->
-    <div v-if="qrVisible" class="mb-6">
-      <p class="text-sm text-gray-600 mb-2">{{ STRINGS.chat.scanPrompt }}</p>
-      <QrcodeVue :value="chatUrl" :size="200" />
+    <!-- Left column: title, QR, help -->
+    <div class="md:w-64 md:flex-shrink-0 flex flex-col items-center">
+      <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ sessionId }}</h2>
+      <div v-if="qrVisible">
+        <p class="text-sm text-gray-600 mb-2">{{ STRINGS.chat.scanPrompt }}</p>
+        <QrcodeVue :value="chatUrl" :size="200" />
+      </div>
+      <button @click="goHome" class="mt-4">{{ STRINGS.ui.homeButton }}</button>
     </div>
 
-    <!-- Chat Messages Section -->
-    <MessageList :messages="messages" />
+    <!-- Right column: chat -->
+    <div class="flex flex-col flex-grow">
+      <MessageList :messages="messages" />
+      <MessageInput @send="handleSend" />
+    </div>
 
-    <!-- Input Section -->
-    <MessageInput @send="handleSend" />
   </div>
 </template>
 
