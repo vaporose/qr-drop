@@ -35,13 +35,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import QrcodeVue from 'qrcode.vue'
-import { v4 as uuid4 } from 'uuid'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
 import { CONFIG } from '@/constants/config'
 
 const route = useRoute()
-const clientId = uuid4()
+const identity = ref<string>('')
 const sessionId = route.params.sessionId as string
 
 const chatUrl = `${CONFIG.frontendUrl}/chat/${sessionId}`
@@ -54,12 +53,7 @@ const qrVisible = ref(true)
 
 function sendMessage() {
   if (socket.value && input.value.trim() !== '') {
-    const payload = {
-      client_id: clientId,
-      message: input.value
-    }
-    console.log('Sending message')
-    socket.value.send(JSON.stringify(payload))
+    socket.value.send(JSON.stringify(input.value))
     input.value = ''
   }
 }
@@ -71,14 +65,18 @@ onMounted(() => {
     const data = JSON.parse(event.data)
 
     if (data.type === MessageType.UserJoined) {
+      if (!identity.value) {
+        identity.value = data.identity
+      }
       if (data.count >= 2) {
         qrVisible.value = false
       }
     } else {
+      console.log('Received message', data)
       messages.value.push(
-        data.client_id === clientId
-          ? { text: `${STRINGS.chat.you}: ${data.message}`, self: true }
-          : { text: `${STRINGS.chat.them}: ${data.message}`, self: false }
+        data.client_id === identity.value
+          ? { text: `${STRINGS.chat.you}: ${data.message}`, sender: 'self' }
+          : { text: `${data.client_id}: ${data.message}`, sender: 'other' }
       )
     }
   }
