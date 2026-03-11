@@ -1,45 +1,3 @@
-<template>
-  <div class="min-h-screen p-6 flex flex-col items-center justify-start">
-    <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ sessionId }}</h2>
-
-    <!-- QR Code Section -->
-    <div v-if="qrVisible" class="mb-6">
-      <p class="text-sm text-gray-600 mb-2">{{ STRINGS.chat.scanPrompt }}</p>
-      <QrcodeVue :value="chatUrl" :size="200" />
-    </div>
-
-    <!-- Chat Messages Section -->
-    <div class="w-full max-w-xl rounded-md p-4 mb-4 h-64 overflow-y-auto chatbox">
-      <div v-for="(msg, index) in messages" :key="index" class="mb-2">
-        <div class="message-text px-3 py-2 rounded-md"
-             :class="`message-${msg.sender}`">
-          {{ msg.text }}
-        </div>
-        <div v-if="msg.sender !== 'system'" class="message-meta">
-          <span class="message-identity">{{ msg.identity }}</span>
-          <span class="message-actions">
-            <!-- TODO: copy button etc go here -->
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Input Section -->
-    <div class="w-full max-w-xl flex gap-2">
-      <input
-        v-model="input"
-        @keyup.enter="sendMessage()"
-        type="text"
-        class="flex-grow px-4 py-2 border rounded-md messagebox"
-        :placeholder="STRINGS.chat.placeholder"
-      />
-      <button @click="sendMessage()" class="px-4 py-2 rounded-md">
-        {{ STRINGS.chat.sendButton }}
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -47,6 +5,8 @@ import QrcodeVue from 'qrcode.vue'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
 import { CONFIG } from '@/constants/config'
+import type { MessageSender, ChatMessage } from '@/constants/types'
+import MessageList from '@/components/MessageList.vue'
 
 const route = useRoute()
 const identity = ref<string>('')
@@ -54,9 +14,8 @@ const sessionId = route.params.sessionId as string
 
 const chatUrl = `${CONFIG.frontendUrl}/chat/${sessionId}`
 const socket = ref<WebSocket | null>(null)
-type MessageSender = 'self' | 'other' | 'system'
 
-const messages = ref<{ text: string; sender: MessageSender }[]>([])
+const messages = ref<ChatMessage[]>([])
 const input = ref('')
 const qrVisible = ref(true)
 
@@ -104,37 +63,38 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-.chatbox {
-  background-color: var(--color-background-soft);
-}
+<template>
+  <div class="min-h-screen p-6 flex flex-col items-center justify-start">
+    <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ sessionId }}</h2>
 
+    <!-- QR Code Section -->
+    <div v-if="qrVisible" class="mb-6">
+      <p class="text-sm text-gray-600 mb-2">{{ STRINGS.chat.scanPrompt }}</p>
+      <QrcodeVue :value="chatUrl" :size="200" />
+    </div>
+
+    <!-- Chat Messages Section -->
+    <MessageList :messages="messages" />
+
+    <!-- Input Section -->
+    <div class="w-full max-w-xl flex gap-2">
+      <input
+        v-model="input"
+        @keyup.enter="sendMessage()"
+        type="text"
+        class="flex-grow px-4 py-2 border rounded-md messagebox"
+        :placeholder="STRINGS.chat.placeholder"
+      />
+      <button @click="sendMessage()" class="px-4 py-2 rounded-md">
+        {{ STRINGS.chat.sendButton }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
 .messagebox {
   background-color: var(--color-background-mute);
-}
-
-.message-self{
-  background-color: var(--color-background-accent);
-}
-
-.message-other{
-  background-color: var(--color-background-transparent);
-}
-
-.message-system {
-  background-color: transparent;
-  text-align: center;
-  font-style: italic;
-  color: var(--color-text-mute);
-}
-
-.message-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.75rem;
-  margin-left: 0.75rem;
-  opacity: 0.6;
 }
 
 </style>
