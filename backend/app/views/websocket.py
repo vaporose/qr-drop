@@ -39,6 +39,6 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                         "message": data["message"]
                     })
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        logger.error("WebSocket error: %s", e)
     finally:
         SESSIONS[session_id].pop(websocket, None)
