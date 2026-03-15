@@ -3,7 +3,7 @@ import logging.config
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .views import add_router
+from .routes import add_router
 from .config import SETTINGS
 
 
