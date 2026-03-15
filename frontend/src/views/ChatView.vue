@@ -49,8 +49,12 @@ onMounted(() => {
     messages.value.push({ text: STRINGS.chat.connected, sender: "system" })
   }
 
-  socket.value.onclose = () => {
-    messages.value.push({ text: STRINGS.chat.disconnected, sender: "system" })
+  socket.value.onclose = (event) => {
+    if (event.code === 4004) {
+      router.push('/session-expired')
+    } else {
+      messages.value.push({ text: STRINGS.chat.disconnected, sender: "system" })
+    }
   }
 })
 

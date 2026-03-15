@@ -1,24 +1,8 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { CONFIG } from '@/constants/config'
+import { useSession } from '@/composables/useSession'
 
-const router = useRouter()
+const { createSession } = useSession()
 
-
-async function createSession() {
-  try {
-    const response = await fetch(`${CONFIG.backendUrl}/create-session`, {
-      method: 'POST'
-    })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    await router.push(`/chat/${data.session_id}`)
-  } catch (error) {
-    console.error('Failed to create session:', error)
-  }
-}
 </script>
 
 <template>

@@ -8,5 +8,11 @@ export const STRINGS = {
     sendButton: 'Send',
     connected: '[Connected]',
     disconnected: '[Disconnected]'
+  },
+  sessionExpired: {
+    title: 'Session Expired',
+    message: 'Your session has expired. You need to start a new session.',
+    homeButton: 'Go to Home',
+    newChatButton: 'Start New Chat'
   }
 } as const
