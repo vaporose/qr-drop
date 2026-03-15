@@ -4,7 +4,8 @@ import logging
 from .router import router
 from fastapi import WebSocket
 
-SESSIONS: dict[str, dict[WebSocket, str]] = {}
+from ..store import SESSIONS
+
 
 logger = logging.getLogger(__name__)
 
