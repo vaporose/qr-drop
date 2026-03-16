@@ -1,45 +1,63 @@
-import user_agents
 import logging
 
-from .router import router
 from fastapi import WebSocket
 
-from ..store import SESSIONS
-
+from .router import router
+from ..handlers import register_websocket_identity, broadcast
+from ..store import SESSIONS, CONNECTIONS
+from ..models import Message
 
 logger = logging.getLogger(__name__)
 
 
 @router.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
-    if session_id not in SESSIONS:
-        SESSIONS[session_id] = {}
+    """
+    Handles WebSocket connections and broadcasting functionalities.
 
-    user_agent = websocket.headers.get("user-agent", "Unknown device")
-    ua = user_agents.parse(user_agent)
-    identity = f"{ua.browser.family} on {ua.os.family}"
+    Workflow:
+        Checks first if the session id is valid. It should have already been set in the session store.
+        Registers the WebSocket identity for the session.
+        Broadcasts a user joined message to all clients in the session.
+        Listens for incoming chat messages and broadcasts them to all clients in the session.
+
+    Args:
+        websocket: The WebSocket connection instance.
+        session_id: The session identifier for the group of connected clients.
+    """
+    if session_id not in SESSIONS:
+        await websocket.close(code=4004, reason="Session not found or expired")
+        return
 
     await websocket.accept()
-    SESSIONS[session_id][websocket] = identity
-
-    for client in SESSIONS[session_id]:
-        await client.send_json({
-            "type": "user_joined",
-            "count": len(SESSIONS[session_id]),
-            "identity": identity
-        })
-
     try:
+        identity = register_websocket_identity(websocket, session_id)
+
+        await broadcast(session_id=session_id, payload={
+                "type": "user_joined",
+                "count": len(CONNECTIONS[session_id]),
+                "identity": identity.model_dump_json()
+            })
+
         while True:
             data = await websocket.receive_json()
             if data["type"] == "chat_message":
-                for client in SESSIONS[session_id]:
-                    await client.send_json({
-                        "type": "chat_message",
-                        "client_id": identity,
-                        "message": data["message"]
-                    })
-    except Exception as e:
-        logger.error("WebSocket error: %s", e)
+                message = Message(content=data["message"], sender_id=identity.unique_identifier)
+                await broadcast(session_id=session_id, payload={
+                    "type": "chat_message",
+                    "identity": identity.model_dump(mode="json"),
+                    **message.model_dump(mode="json")
+                })
+
+    except ValueError:
+        logger.error("Connection state corrupted for session %s", session_id)
+        await websocket.close(code=4011, reason="Internal connection error")
+        return
+
+    except Exception as err:
+        logger.error("Unhandled WebSocket error: %s", err, exc_info=True)
+        await websocket.close(code=4000, reason="Internal server error")
+        return
     finally:
-        SESSIONS[session_id].pop(websocket, None)
+        CONNECTIONS[session_id].pop(websocket, None)
+        return

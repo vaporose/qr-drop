@@ -27,33 +27,31 @@ onMounted(() => {
 
   socket.value.onmessage = (event) => {
     const data = JSON.parse(event.data)
-
     if (data.type === MessageType.UserJoined) {
       if (!identity.value) {
-        identity.value = data.identity
+        identity.value = data.identity.unique_identifier
       }
       if (data.count >= 2) {
         qrVisible.value = false
       }
     } else if (data.type === MessageType.ChatMessage) {
-      console.log('Received message', data)
       messages.value.push(
-        data.client_id === identity.value
-          ? { text: data.message, sender: 'self', identity: `This device: ${identity.value}` }
-          : { text: data.message, sender: 'other', identity: data.client_id }
+        data.identity.unique_identifier === identity.value
+          ? { content: data.content, created_at: data.created_at, sender_type: 'self', identity: data.identity }
+          : { content: data.content, created_at: data.created_at, sender_type: 'other', identity: data.identity }
       )
     }
   }
 
   socket.value.onopen = () => {
-    messages.value.push({ text: STRINGS.chat.connected, sender: "system" })
+    messages.value.push({ content: STRINGS.chat.connected, sender: "system" })
   }
 
   socket.value.onclose = (event) => {
     if (event.code === 4004) {
       router.push('/session-expired')
     } else {
-      messages.value.push({ text: STRINGS.chat.disconnected, sender: "system" })
+      messages.value.push({ content: STRINGS.chat.disconnected, sender: "system" })
     }
   }
 })
