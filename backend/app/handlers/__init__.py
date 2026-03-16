@@ -1,4 +1,4 @@
-from .websocket import register_websocket_identity, broadcast
+from .connection import register_websocket_identity, broadcast
 
 
 __all__ = [
