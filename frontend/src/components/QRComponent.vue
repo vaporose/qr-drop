@@ -8,14 +8,14 @@ const props = defineProps<{
   qrVisible: boolean
 }>()
 
-const chatUrl = `${CONFIG.frontendUrl}/chat/${sessionId}`
+const chatUrl = `${CONFIG.frontendUrl}/chat/${props.sessionId}`
 
 </script>
 
 <template>
     <div class="md:w-64 md:flex-shrink-0 flex flex-col items-center">
-      <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ sessionId }}</h2>
-      <div v-if="qrVisible">
+      <h2 class="text-2xl font-bold mb-4">{{ STRINGS.ui.chatRoomLabel }} {{ props.sessionId }}</h2>
+      <div v-if="props.qrVisible">
         <p class="text-sm text-gray-600 mb-2">{{ STRINGS.chat.scanPrompt }}</p>
         <QrcodeVue :value="chatUrl" :size="200" />
       </div>
