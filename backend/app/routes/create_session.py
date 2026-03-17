@@ -1,3 +1,12 @@
+"""
+Handles session lifecycle endpoints: creation and termination.
+
+Session creation is the entry point for all chat sessions. The client calls
+POST /sessions to receive a session ID, then uses that ID to establish a
+WebSocket connection. The session remains active until explicitly terminated
+via DELETE /sessions/{session_id} or until the inactivity timeout fires.
+"""
+
 import secrets
 import logging
 
@@ -11,13 +20,13 @@ from datetime import datetime, timezone
 logger = logging.getLogger(__name__)
 
 
-@router.post("/create-session")
+@router.post("/sessions")
 async def create_session() -> CreateSessionResponse:
     """
-    Sets up a new session ID and adds it to the SESSIONS store.
+    Creates a new chat session and stores it in the session store.
 
     Returns:
-        CreateSessionResponse: The created session ID and the computed chat URL.
+        CreateSessionResponse: The generated session ID and its associated chat URL.
     """
     session_id = secrets.token_urlsafe(6)
     chat_url = f"{SETTINGS.base_chat_url}{session_id}"

@@ -1,12 +1,12 @@
 import { useRouter } from 'vue-router'
-import { CONFIG } from '@/constants/config'
+import { ENDPOINTS } from '@/constants/endpoints'
 
 export function useSession() {
     const router = useRouter()
 
     async function createSession() {
       try {
-        const response = await fetch(`${CONFIG.backendUrl}/create-session`, {
+        const response = await fetch(ENDPOINTS.sessions.create, {
           method: 'POST'
         })
         if (!response.ok) {

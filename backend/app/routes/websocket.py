@@ -10,7 +10,7 @@ from ..models import Message
 logger = logging.getLogger(__name__)
 
 
-@router.websocket("/ws/{session_id}")
+@router.websocket("/ws/sessions/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
     """
     Handles WebSocket connections and broadcasting functionalities.

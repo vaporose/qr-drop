@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
-import { CONFIG } from '@/constants/config'
+import { ENDPOINTS } from '@/constants/endpoints'
 import type { MessageSender, ChatMessage } from '@/constants/types'
 import MessageList from '@/components/MessageList.vue'
 import MessageInput from '@/components/MessageInput.vue'
@@ -23,7 +23,7 @@ function handleSend(message: string) {
 }
 
 onMounted(() => {
-  socket.value = new WebSocket(`${CONFIG.backendWsUrl}/${sessionId}`)
+  socket.value = new WebSocket(ENDPOINTS.connections.chat(sessionId));
 
   socket.value.onmessage = (event) => {
     const data = JSON.parse(event.data)

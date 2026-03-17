@@ -4,7 +4,7 @@ const protocol: string = import.meta.env.VITE_URL_PROTOCOL
 
 export const CONFIG = {
   backendUrl: `${protocol}://${hostIp}:8000`,
-  backendWsUrl: `${protocol === 'https' ? 'wss' : 'ws'}://${hostIp}:8000/ws`,
+  backendWsUrl: `${protocol === 'https' ? 'wss' : 'ws'}://${hostIp}:8000`,
   frontendUrl: `${protocol}://${hostIp}:5173`,
 
 } as const
