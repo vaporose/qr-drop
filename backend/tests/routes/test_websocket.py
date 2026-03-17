@@ -3,10 +3,10 @@ from fastapi.testclient import TestClient
 
 def test_websocket_connection(client: TestClient):
     # Create session first
-    resp = client.post("/create-session")
+    resp = client.post("/sessions")
     session_id = resp.json()["session_id"]
     
-    with client.websocket_connect(f"/ws/{session_id}") as websocket:
+    with client.websocket_connect(f"/ws/sessions/{session_id}") as websocket:
         # First message from the server: {"type": "user_joined", "count": 1}
         data = websocket.receive_json()
         assert data["type"] == "user_joined"
@@ -21,18 +21,18 @@ def test_websocket_connection(client: TestClient):
 
 def test_websocket_broadcast(client: TestClient):
     # 1. Create a session first
-    resp = client.post("/create-session")
+    resp = client.post("/sessions")
     assert resp.status_code == 200
     session_id = resp.json()["session_id"]
     
     # 2. First client joins
-    with client.websocket_connect(f"/ws/{session_id}") as ws1:
+    with client.websocket_connect(f"/ws/sessions/{session_id}") as ws1:
         data1 = ws1.receive_json()
         assert data1["type"] == "user_joined"
         assert data1["count"] == 1
         
         # 3. Second client joins
-        with client.websocket_connect(f"/ws/{session_id}") as ws2:
+        with client.websocket_connect(f"/ws/sessions/{session_id}") as ws2:
             # ws1 should receive a message about a new user
             data1_new = ws1.receive_json()
             assert data1_new["type"] == "user_joined"

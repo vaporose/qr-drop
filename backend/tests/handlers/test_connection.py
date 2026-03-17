@@ -17,8 +17,8 @@ def mock_websocket():
 def clean_store(monkeypatch):
     sessions = {}
     connections = {}
-    monkeypatch.setattr("app.handlers.websocket.SESSIONS", sessions)
-    monkeypatch.setattr("app.handlers.websocket.CONNECTIONS", connections)
+    monkeypatch.setattr("app.handlers.connection.SESSIONS", sessions)
+    monkeypatch.setattr("app.handlers.connection.CONNECTIONS", connections)
     return sessions, connections
 
 
