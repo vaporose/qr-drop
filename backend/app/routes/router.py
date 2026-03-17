@@ -31,6 +31,6 @@ def add_router(app):
     Returns:
         The FastAPI application passed in, now with a shiny new router
     """
-    from . import websocket, create_session
+    from . import websocket, sessions
     app.include_router(router)
     return app
