@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '@/composables/useSession'
+import { STRINGS } from "@/constants/strings.ts";
 
 const { createSession } = useSession()
 </script>
