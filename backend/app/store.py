@@ -22,6 +22,14 @@ connection rather than the session.
 The session_id is the shared key between both structures. Any operation that
 removes a session must clean up both SESSIONS and CONNECTIONS together. A session
 present in one but not the other is an invalid state.
+
+SCALING NOTE:
+This implementation is planned only for a single-instance application, as right now
+this is meant to be used either for a locally configured network or as a service
+with relatively few users.
+
+If the number of users grows significantly, this will be shifted to a redis-based
+implementation to support horizontal scaling.
 """
 
 
