@@ -5,7 +5,6 @@ const props = defineProps<{
   messages: ChatMessage[]
 }>()
 
-console.log("Received message list:", props.messages);
 </script>
 
 <template>
@@ -42,7 +41,7 @@ console.log("Received message list:", props.messages);
   background-color: transparent;
   text-align: center;
   font-style: italic;
-  color: var(--color-text-mute);
+  color: var(--color-text-muted);
 }
 
 .message-meta {
