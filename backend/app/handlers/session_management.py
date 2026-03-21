@@ -19,10 +19,20 @@ def create_new_session():
     """
     Creates a new chat session and stores it in the session store.
 
+    This string generation method includes ceil(n * 4/3) characters, so duplicate sessions are highly improbable.
+    The collision check is included for completeness, but in practice, if the session already exists, that likely
+    indicates a likely problem with the generation method.
+
+    This is why the log message is a warning and not a debug message.
+
     Returns:
         CreateSessionResponse: Response to create a new chat session.
     """
     session_id = secrets.token_urlsafe(6)
+    if session_id in SESSIONS or session_id in CONNECTIONS:
+        logger.warning("Chat session %s already exists", session_id)
+        return create_new_session()
+
     chat_url = f"{SETTINGS.base_chat_url}{session_id}"
     SESSIONS[session_id] = Session(session_id=session_id, last_active=datetime.now(timezone.utc))
     logger.debug("Chat url: %s, Session ID: %s", chat_url, session_id)
