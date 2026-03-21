@@ -8,16 +8,14 @@ via DELETE /sessions/{session_id} or until the inactivity timeout fires.
 """
 
 import logging
-import secrets
-from datetime import datetime, timezone
 
 from fastapi import HTTPException
 
 from .router import router
 from ..config import SETTINGS
+from ..handlers import create_new_session, terminate_session, get_section_by_id
 from ..models import Session
 from ..schemas import CreateSessionResponse
-from ..store import SESSIONS, CONNECTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +28,7 @@ async def create_session() -> CreateSessionResponse:
     Returns:
         CreateSessionResponse: The generated session ID and its associated chat URL.
     """
-    session_id = secrets.token_urlsafe(6)
-    chat_url = f"{SETTINGS.base_chat_url}{session_id}"
-    SESSIONS[session_id] = Session(session_id=session_id, last_active=datetime.now(timezone.utc))
-    logger.debug("Chat url: %s, Session ID: %s", chat_url, session_id)
-    return CreateSessionResponse(session_id=session_id, chat_url=chat_url)
+    return create_new_session()
 
 
 @router.get("/sessions/{session_id}")
@@ -51,9 +45,10 @@ async def get_session(session_id: str) -> Session:
     """
     if not SETTINGS.debug:
         raise HTTPException(status_code=404)
-    if session_id not in SESSIONS:
+    session = get_section_by_id(session_id)
+    if session_id is None:
         raise HTTPException(status_code=404)
-    return SESSIONS[session_id]
+    return session
 
 
 @router.delete("/sessions/{session_id}", status_code=204)
@@ -67,14 +62,4 @@ async def end_session(session_id: str):
     Args:
         session_id: The unique identifier of the chat session to end.
     """
-    in_sessions = session_id in SESSIONS
-    in_connections = session_id in CONNECTIONS
-
-    if in_sessions != in_connections:
-        logger.debug("Session %s in inconsistent state: SESSIONS=%s, CONNECTIONS=%s",
-                     session_id, in_sessions, in_connections)
-    elif not in_sessions and not in_connections:
-        logger.debug("Session %s not found in either store", session_id)
-
-    SESSIONS.pop(session_id, None)
-    CONNECTIONS.pop(session_id, None)
+    terminate_session(session_id)
