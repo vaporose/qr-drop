@@ -80,3 +80,24 @@ def terminate_session(session_id: str):
 
     SESSIONS.pop(session_id, None)
     CONNECTIONS.pop(session_id, None)
+    await cleanup_session_files(session_id)
+
+
+async def process_message(session_id: str, content: str, sender_id: str) -> Message:
+    """
+    Processes a message by appending it to the session's message history and updating the last active timestamp.
+    The message is also persisted to disk for the duration of the session.
+
+    Args:
+        session_id: An existing session identifier to update messages with.
+        content: Content of a message to update.
+        sender_id: Identifier of the message sender, which will be associated with the message for tracking purposes.
+
+    Returns:
+        Message: The message object that was created and stored in the session.
+    """
+    message = Message(content=content, sender_id=sender_id)
+    SESSIONS[session_id].messages.append(message)
+    SESSIONS[session_id].last_active = datetime.now(timezone.utc)
+    await write_session_to_file(SESSIONS[session_id])
+    return message

@@ -3,9 +3,8 @@ import logging
 from fastapi import WebSocket
 
 from .router import router
-from ..handlers import register_websocket_identity, broadcast
+from ..handlers import register_websocket_identity, broadcast, process_message
 from ..store import SESSIONS, CONNECTIONS
-from ..models import Message
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,9 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         while True:
             data = await websocket.receive_json()
             if data["type"] == "chat_message":
-                message = Message(content=data["message"], sender_id=identity.unique_identifier)
+                message = await process_message(session_id=session_id,
+                                                content=data["message"],
+                                                sender_id=identity.unique_identifier)
                 await broadcast(session_id=session_id, payload={
                     "type": "chat_message",
                     "identity": identity.model_dump(mode="json"),
