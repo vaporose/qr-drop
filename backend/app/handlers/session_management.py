@@ -7,9 +7,10 @@ import secrets
 from datetime import datetime, timezone
 
 from ..store import SESSIONS, CONNECTIONS
-from ..models import Session
+from ..models import Session, Message
 from ..schemas import CreateSessionResponse
 from ..config import SETTINGS
+from .file_handling import write_session_to_file, cleanup_session_files
 
 
 logger = logging.getLogger(__name__)
@@ -52,7 +53,7 @@ def get_section_by_id(session_id: str) -> Session | None:
     return SESSIONS.get(session_id)
 
 
-def terminate_session(session_id: str):
+async def terminate_session(session_id: str):
     """
     Deletes a chat session from the session store.
 
@@ -74,7 +75,7 @@ def terminate_session(session_id: str):
 
     if in_sessions != in_connections:
         logger.warning("Session %s in inconsistent state: SESSIONS=%s, CONNECTIONS=%s",
-                     session_id, in_sessions, in_connections)
+                       session_id, in_sessions, in_connections)
     elif not in_sessions and not in_connections:
         logger.warning("Session %s not found in either store", session_id)
 

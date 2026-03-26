@@ -24,8 +24,12 @@ stream = "ext://sys.stdout"
 handlers = ["console"]
 level = "DEBUG"
 
+[development]
+session_storage_folder = "instance/"
+
 [production]
 debug = false
+session_storage_folder = "/tmp/"
 
 [production.logging.root]
 level = "INFO"
