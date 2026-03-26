@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
 import { ENDPOINTS } from '@/constants/endpoints'
@@ -10,6 +10,7 @@ import MessageInput from '@/components/MessageInput.vue'
 import QRComponent from '@/components/QRComponent.vue'
 
 const route = useRoute()
+const router = useRouter()
 const identity = ref<string>('')
 const sessionId = route.params.sessionId as string
 const socket = ref<WebSocket | null>(null)
@@ -47,13 +48,14 @@ onMounted(() => {
     messages.value.push({ content: STRINGS.chat.connected, sender_type: "system" })
   }
 
-  socket.value.onclose = (event) => {
+  socket.value.onclose = async (event) => {
     if (event.code === 4004) {
-      router.push('/session-expired')
+      await router.push('/session-expired')
     } else {
       messages.value.push({ content: STRINGS.chat.disconnected, sender_type: "system" })
     }
   }
+
 })
 
 onUnmounted(() => {
