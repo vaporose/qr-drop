@@ -62,4 +62,4 @@ async def end_session(session_id: str):
     Args:
         session_id: The unique identifier of the chat session to end.
     """
-    terminate_session(session_id)
+    await terminate_session(session_id)
