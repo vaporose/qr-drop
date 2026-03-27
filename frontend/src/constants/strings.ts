@@ -1,6 +1,7 @@
 export const STRINGS = {
   ui: {
     chatRoomLabel: 'Chat Room:',
+    terminate: 'End Session'
   },
   chat: {
     scanPrompt: 'Scan this QR code on another device to join:',

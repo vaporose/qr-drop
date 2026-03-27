@@ -8,6 +8,12 @@
   --c-tan-dark-low-opacity: rgba(180, 140, 116, 0.3);
   --c-tan-low-opacity: rgba(223, 179, 136, 0.6);
 
+  --c-destructive: #a63d2f;
+  --c-destructive-soft: #c4513f;
+  --c-destructive-low-opacity: rgba(166, 61, 47, 0.15);
+  --c-destructive-dark: #7a2d22;
+  --c-destructive-dark-soft: #9e3d2e;
+
   --vt-c-white: #ffffff;
   --vt-c-white-soft: rgba(248, 248, 248, 0.2);
   --vt-c-white-mute: #f2f2f2;
@@ -33,6 +39,10 @@
   --color-background-transparent: var(--c-tan-low-opacity);
   --color-background-accent: var(--c-tan-dark-low-opacity);
 
+  --color-destructive: var(--c-destructive);
+  --color-destructive-hover: var(--c-destructive-soft);
+  --color-destructive-subtle: var(--c-destructive-low-opacity);
+
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
 
@@ -53,7 +63,17 @@ button {
 button:hover {
   background-color: var(--c-tan-dark);
   color: var(--vt-c-indigo-soft);
+}
 
+.button-destructive {
+  background-color: transparent;
+  color: var(--color-destructive);
+  border: 1px solid var(--color-destructive);
+}
+
+.button-destructive:hover {
+  background-color: var(--color-destructive);
+  color: var(--vt-c-white);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -63,6 +83,10 @@ button:hover {
     --color-background-mute: var(--vt-c-black-mute);
     --color-background-transparent: var(--c-indigo-low-opacity);
     --color-background-accent: var(--c-indigo-dark-low-opacity);
+
+    --color-destructive: var(--c-destructive-soft);
+    --color-destructive-hover: var(--c-destructive);
+    --color-destructive-subtle: var(--c-destructive-low-opacity);
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
@@ -80,6 +104,13 @@ button:hover {
   button:hover {
     background-color: var(--c-tan-dark);
     color: var(--vt-c-indigo-soft);
+  }
+  button, .button-destructive {
+
+  }
+
+  button:hover, .button-destructive {
+
   }
 }
 
