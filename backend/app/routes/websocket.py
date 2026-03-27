@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import WebSocket
+from starlette.websockets import WebSocketDisconnect
 
 from .router import router
 from ..handlers import register_websocket_identity, broadcast, process_message
@@ -50,6 +51,10 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                     **message.model_dump(mode="json")
                 })
 
+    except WebSocketDisconnect:
+        logger.debug("Client disconnected from session %s", session_id)
+        return
+
     except ValueError:
         logger.error("Connection state corrupted for session %s", session_id)
         await websocket.close(code=4011, reason="Internal connection error")
@@ -60,5 +65,6 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         await websocket.close(code=4000, reason="Internal server error")
         return
     finally:
-        CONNECTIONS[session_id].pop(websocket, None)
+        if session_id in CONNECTIONS:
+            CONNECTIONS[session_id].pop(websocket, None)
         return
