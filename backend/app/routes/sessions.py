@@ -46,7 +46,7 @@ async def get_session(session_id: str) -> Session:
     if not SETTINGS.debug:
         raise HTTPException(status_code=404)
     session = get_section_by_id(session_id)
-    if session_id is None:
+    if session is None:
         raise HTTPException(status_code=404)
     return session
 
