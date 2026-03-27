@@ -13,7 +13,7 @@ from fastapi import HTTPException
 
 from .router import router
 from ..config import SETTINGS
-from ..handlers import create_new_session, terminate_session, get_section_by_id
+from ..handlers import create_new_session, terminate_session, get_session_by_id
 from ..models import Session
 from ..schemas import CreateSessionResponse
 
@@ -45,7 +45,7 @@ async def get_session(session_id: str) -> Session:
     """
     if not SETTINGS.debug:
         raise HTTPException(status_code=404)
-    session = get_section_by_id(session_id)
+    session = get_session_by_id(session_id)
     if session is None:
         raise HTTPException(status_code=404)
     return session

@@ -40,7 +40,7 @@ def create_new_session():
     return CreateSessionResponse(session_id=session_id, chat_url=chat_url)
 
 
-def get_section_by_id(session_id: str) -> Session | None:
+def get_session_by_id(session_id: str) -> Session | None:
     """
     Retrieves a chat session from the session store by its session ID.
 
