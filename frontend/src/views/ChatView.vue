@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { STRINGS } from '@/constants/strings'
 import { MessageType } from '@/constants/enums'
 import { ENDPOINTS } from '@/constants/endpoints'
-import type { MessageSender, ChatMessage } from '@/constants/types'
+import type { ChatMessage } from '@/constants/types'
 import MessageList from '@/components/MessageList.vue'
 import MessageInput from '@/components/MessageInput.vue'
 import QRComponent from '@/components/QRComponent.vue'
@@ -17,25 +17,37 @@ const socket = ref<WebSocket | null>(null)
 const messages = ref<ChatMessage[]>([])
 const qrVisible = ref(true)
 
+// Helper functions
 function handleSend(message: string) {
   if (socket.value) {
     socket.value.send(JSON.stringify({ type: 'chat_message', message }))
   }
 }
 
+function handlePong() {
+  if (socket.value) {
+    socket.value.send(JSON.stringify({ type: 'pong' }))
+  }
+}
+
+// WebSocket setup and event handlers
 onMounted(() => {
   socket.value = new WebSocket(ENDPOINTS.connections.chat(sessionId));
 
   socket.value.onmessage = (event) => {
     const data = JSON.parse(event.data)
-    if (data.type === MessageType.UserJoined) {
+    if (data.type === MessageType.Ping) {
+      handlePong();
+    }
+    else if (data.type === MessageType.UserJoined) {
       if (!identity.value) {
         identity.value = data.identity.unique_identifier
       }
       if (data.count >= 2) {
         qrVisible.value = false
       }
-    } else if (data.type === MessageType.ChatMessage) {
+    }
+    else if (data.type === MessageType.ChatMessage) {
       messages.value.push(
         data.identity.unique_identifier === identity.value
           ? { content: data.content, created_at: data.created_at, sender_type: 'self', identity: data.identity }

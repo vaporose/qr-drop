@@ -4,7 +4,7 @@ from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 from .router import router
-from ..handlers import register_websocket_identity, broadcast, process_message
+from ..handlers import register_websocket_identity, broadcast, process_message, create_heartbeat_task
 from ..store import SESSIONS, CONNECTIONS
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         return
 
     await websocket.accept()
+    heartbeat_task = create_heartbeat_task(websocket, session_id)
     try:
         identity = register_websocket_identity(websocket, session_id)
 
@@ -41,7 +42,9 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
         while True:
             data = await websocket.receive_json()
-            if data["type"] == "chat_message":
+            if data["type"] == "pong":
+                continue
+            elif data["type"] == "chat_message":
                 message = await process_message(session_id=session_id,
                                                 content=data["message"],
                                                 sender_id=identity.unique_identifier)
@@ -65,6 +68,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         await websocket.close(code=4000, reason="Internal server error")
         return
     finally:
+        heartbeat_task.cancel()
         if session_id in CONNECTIONS:
             CONNECTIONS[session_id].pop(websocket, None)
         return

@@ -1,4 +1,5 @@
 export enum MessageType {
   UserJoined = 'user_joined',
-  ChatMessage = 'chat_message'
+  ChatMessage = 'chat_message',
+  Ping = 'ping'
 }
