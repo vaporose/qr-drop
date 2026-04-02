@@ -8,6 +8,7 @@ base_frontend_url = "@format {this.PROTOCOL}://{this.HOST}:{this.FRONTEND_PORT}"
 base_chat_url = "@format {this.BASE_FRONTEND_URL}/chat"
 HEARTBEAT_INTERVAL = 30
 HEARTBEAT_TIMEOUT = 10
+INACTIVITY_TIMEOUT = 600
 
 [default.logging]
 version = 1
