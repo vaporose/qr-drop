@@ -10,7 +10,6 @@ from ..store import SESSIONS, CONNECTIONS
 from ..models import Session, Message
 from ..schemas import CreateSessionResponse
 from ..config import SETTINGS
-from .file_handling import write_session_to_file, cleanup_session_files
 
 
 logger = logging.getLogger(__name__)
@@ -64,6 +63,8 @@ async def terminate_session(session_id: str):
 
     Therefore, we log a warning to help identify potential bugs in the session lifecycle management.
 
+    Session state is held only in memory, so termination is complete once both stores are cleared.
+
     Args:
         session_id: The unique identifier of the chat session to delete.
 
@@ -81,13 +82,12 @@ async def terminate_session(session_id: str):
 
     SESSIONS.pop(session_id, None)
     CONNECTIONS.pop(session_id, None)
-    await cleanup_session_files(session_id)
 
 
 async def process_message(session_id: str, content: str, sender_id: str) -> Message:
     """
     Processes a message by appending it to the session's message history and updating the last active timestamp.
-    The message is also persisted to disk for the duration of the session.
+    Message history lives only in memory for the duration of the session and is never written to disk.
 
     Args:
         session_id: An existing session identifier to update messages with.
@@ -100,5 +100,4 @@ async def process_message(session_id: str, content: str, sender_id: str) -> Mess
     message = Message(content=content, sender_id=sender_id)
     SESSIONS[session_id].messages.append(message)
     SESSIONS[session_id].last_active = datetime.now(timezone.utc)
-    await write_session_to_file(SESSIONS[session_id])
     return message
