@@ -55,8 +55,28 @@ async def test_broadcast(mock_websocket, clean_store):
     sessions, connections = clean_store
     session_id = "session1"
     connections[session_id] = {mock_websocket: MagicMock(spec=Identity)}
-    
+
     payload = {"message": "hello"}
     await broadcast(session_id, payload)
-    
+
     mock_websocket.send_json.assert_called_once_with(payload)
+
+
+@pytest.mark.asyncio
+async def test_heartbeat_terminates_inactive_session(mock_websocket, monkeypatch):
+    """An inactive session must be cleaned up from the stores, not just have its socket closed."""
+    from app.handlers import connection
+
+    session_id = "inactive1"
+    mock_websocket.close = AsyncMock()
+
+    # Skip the real sleep and force the inactive branch deterministically.
+    monkeypatch.setattr(connection.asyncio, "sleep", AsyncMock())
+    monkeypatch.setattr(connection, "check_inactivity", lambda sid: connection.SessionState.INACTIVE)
+    terminate_mock = AsyncMock()
+    monkeypatch.setattr(connection, "terminate_session", terminate_mock)
+
+    await connection.heartbeat(mock_websocket, session_id)
+
+    terminate_mock.assert_awaited_once_with(session_id)
+    mock_websocket.close.assert_awaited_once()

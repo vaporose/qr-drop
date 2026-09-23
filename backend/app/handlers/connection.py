@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 from ..models import Identity, setup_identity
 from ..store import SESSIONS, CONNECTIONS
 from ..config import SETTINGS
+from .session_management import terminate_session
 from fastapi import WebSocket
 from enum import Enum
 
@@ -145,8 +146,9 @@ async def heartbeat(websocket: WebSocket, session_id: str):
             except Exception:
                 break
         elif session_state == SessionState.INACTIVE:
-            logger.debug("Session %s is inactive, closing connection", session_id)
+            logger.debug("Session %s is inactive, terminating session and closing connection", session_id)
             await close_websocket(websocket, code=4008, reason="Session timeout", session_id=session_id)
+            await terminate_session(session_id)
             break
 
 
